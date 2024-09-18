@@ -16,6 +16,8 @@ public class ReizigerDAOHibernate implements ReizigerDAO {
         this.sessionFactory = sessionFactory;
     }
 
+    //Sessions worden automitisch geclosed door TryCatch Block
+
     @Override
     public boolean saveReiziger(Reiziger reiziger){
         Transaction transaction = null;
