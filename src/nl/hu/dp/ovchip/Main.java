@@ -1,12 +1,16 @@
 package nl.hu.dp.ovchip;
 
+import nl.hu.dp.ovchip.data.AdresDAO;
+import nl.hu.dp.ovchip.data.AdresDAOHibernate;
+import nl.hu.dp.ovchip.domein.Adres;
 import nl.hu.dp.ovchip.domein.Reiziger;
-import nl.hu.dp.ovchip.domein.ReizigerDAO;
-import nl.hu.dp.ovchip.domein.ReizigerDAOHibernate;
+import nl.hu.dp.ovchip.data.ReizigerDAO;
+import nl.hu.dp.ovchip.data.ReizigerDAOHibernate;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import java.sql.SQLException;
+import java.sql.SQLOutput;
 import java.time.LocalDate;
 
 /**
@@ -25,6 +29,7 @@ public class Main {
             // Create a Hibernate session factory
             factory = new Configuration().configure()
                     .addAnnotatedClass(Reiziger.class)
+                    .addAnnotatedClass(Adres.class)
                     .buildSessionFactory();
         } catch (Throwable ex) {
             throw new ExceptionInInitializerError(ex);
@@ -33,7 +38,10 @@ public class Main {
 
     public static void main(String[] args) throws SQLException {
         ReizigerDAO reizigerDAO = new ReizigerDAOHibernate(factory);
+        AdresDAO adresDAO = new AdresDAOHibernate(factory);
 
+        // Opdracht P2H
+        System.out.println("[TEST] ReizigerDAOHibernate");
         System.out.println("Nieuwe reiziger wordt opgeslagen en geladen door findById");
         Reiziger Kasper = new Reiziger(45,"Kasper", null, "Meijer", LocalDate.of(2004, 1, 3));
         reizigerDAO.saveReiziger(Kasper);
@@ -62,7 +70,26 @@ public class Main {
         System.out.println("Alle Reizigers ophalen");
         System.out.println(reizigerDAO.findAll());
 
-        //Wijzigingen weer terugzetten
+        // Opdracht P3H
+        System.out.println();
+        System.out.println("[TEST] AdresDAOHibernate");
+        System.out.println("Nieuw adres opslaan en ophalen door findById");
+        Adres adres = new Adres(10, "1234AB", "12", "Straat", "Plaats", Kasper);
+        adresDAO.saveAdres(adres);
+        System.out.println(adresDAO.findById(10));
+
+        System.out.println();
+        System.out.println("Adres updaten en ophalen door reiziger");
+        adres.setPostcode("4321BA");
+        adresDAO.updateAdres(adres);
+        System.out.println(adresDAO.findByReiziger(Kasper));
+
+        System.out.println();
+        System.out.println("Adressen ophalen door findAll");
+        System.out.println(adresDAO.findAll());
+
+        //Wijzigingen weer terugzetten na tests
+        adresDAO.deleteAdres(adres);
         reizigerDAO.deleteReiziger(Kasper);
         reizigerDAO.deleteReiziger(Jan);
     }

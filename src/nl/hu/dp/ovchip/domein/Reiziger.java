@@ -23,6 +23,9 @@ public class Reiziger {
     @Column(name="geboortedatum")
     private LocalDate geboortedatum;
 
+    @OneToOne(mappedBy = "reiziger")
+    private Adres adres;
+
     public Reiziger(){}
 
     public Reiziger(int id, String voorletters, String tussenvoegsel, String achternaam, LocalDate geboortedatum) {

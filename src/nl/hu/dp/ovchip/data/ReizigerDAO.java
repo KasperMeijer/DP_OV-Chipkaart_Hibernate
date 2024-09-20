@@ -1,6 +1,7 @@
-package nl.hu.dp.ovchip.domein;
+package nl.hu.dp.ovchip.data;
 
-import java.sql.SQLException;
+import nl.hu.dp.ovchip.domein.Reiziger;
+
 import java.time.LocalDate;
 import java.util.List;
 

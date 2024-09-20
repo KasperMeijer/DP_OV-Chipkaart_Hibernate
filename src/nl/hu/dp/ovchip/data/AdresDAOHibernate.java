@@ -1,29 +1,28 @@
-package nl.hu.dp.ovchip.domein;
+package nl.hu.dp.ovchip.data;
 
-import org.hibernate.Transaction;
+import nl.hu.dp.ovchip.domein.Adres;
+import nl.hu.dp.ovchip.domein.Reiziger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import java.time.LocalDate;
 import java.util.List;
 
-public class ReizigerDAOHibernate implements ReizigerDAO {
+public class AdresDAOHibernate implements AdresDAO {
 
     private SessionFactory sessionFactory;
 
-    public ReizigerDAOHibernate(SessionFactory sessionFactory) {
+    public AdresDAOHibernate(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
-    //Sessions worden automitisch geclosed door TryCatch Block
-
     @Override
-    public boolean saveReiziger(Reiziger reiziger){
+    public boolean saveAdres(Adres adres) {
         Transaction transaction = null;
         try(Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
-            session.save(reiziger);
+            session.save(adres);
             transaction.commit();
             return true;
         } catch (Exception e) {
@@ -34,11 +33,11 @@ public class ReizigerDAOHibernate implements ReizigerDAO {
     }
 
     @Override
-    public boolean updateReiziger(Reiziger reiziger){
+    public boolean updateAdres(Adres adres) {
         Transaction transaction = null;
         try(Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
-            session.update(reiziger);
+            session.update(adres);
             transaction.commit();
             return true;
         } catch (Exception e) {
@@ -49,11 +48,11 @@ public class ReizigerDAOHibernate implements ReizigerDAO {
     }
 
     @Override
-    public boolean deleteReiziger(Reiziger reiziger){
+    public boolean deleteAdres(Adres adres) {
         Transaction transaction = null;
         try(Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
-            session.remove(reiziger);
+            session.remove(adres);
             transaction.commit();
             return true;
         } catch (Exception e) {
@@ -64,9 +63,9 @@ public class ReizigerDAOHibernate implements ReizigerDAO {
     }
 
     @Override
-    public Reiziger findById(int id){
+    public Adres findById(int id) {
         try (Session session = sessionFactory.openSession()) {
-            return session.get(Reiziger.class, id);
+            return session.get(Adres.class, id);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -74,21 +73,21 @@ public class ReizigerDAOHibernate implements ReizigerDAO {
     }
 
     @Override
-    public List<Reiziger> findByGbdatum(LocalDate date){
+    public Adres findByReiziger(Reiziger reiziger) {
         try (Session session = sessionFactory.openSession()) {
-            Query query = session.createQuery("from Reiziger where geboortedatum = :date ");
-            query.setParameter("date", date);
-            return query.list();
+            Query query = session.createQuery("from Adres where reiziger.id = :reiziger_id");
+            query.setParameter("reiziger_id", reiziger.getId());
+            return (Adres) query.uniqueResult();
         } catch (Exception e) {
             e.printStackTrace();
-            return List.of();
+            return null;
         }
     }
 
     @Override
-    public List<Reiziger> findAll(){
+    public List<Adres> findAll() {
         try (Session session = sessionFactory.openSession()) {
-            Query query = session.createQuery("from Reiziger");
+            Query query = session.createQuery("from Adres");
             return query.list();
         } catch (Exception e) {
             e.printStackTrace();
@@ -96,3 +95,4 @@ public class ReizigerDAOHibernate implements ReizigerDAO {
         }
     }
 }
+
