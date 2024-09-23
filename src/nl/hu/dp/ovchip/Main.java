@@ -1,11 +1,9 @@
 package nl.hu.dp.ovchip;
 
-import nl.hu.dp.ovchip.data.AdresDAO;
-import nl.hu.dp.ovchip.data.AdresDAOHibernate;
+import nl.hu.dp.ovchip.data.*;
 import nl.hu.dp.ovchip.domein.Adres;
+import nl.hu.dp.ovchip.domein.OVChipkaart;
 import nl.hu.dp.ovchip.domein.Reiziger;
-import nl.hu.dp.ovchip.data.ReizigerDAO;
-import nl.hu.dp.ovchip.data.ReizigerDAOHibernate;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
@@ -30,6 +28,7 @@ public class Main {
             factory = new Configuration().configure()
                     .addAnnotatedClass(Reiziger.class)
                     .addAnnotatedClass(Adres.class)
+                    .addAnnotatedClass(OVChipkaart.class)
                     .buildSessionFactory();
         } catch (Throwable ex) {
             throw new ExceptionInInitializerError(ex);
@@ -39,6 +38,7 @@ public class Main {
     public static void main(String[] args) throws SQLException {
         ReizigerDAO reizigerDAO = new ReizigerDAOHibernate(factory);
         AdresDAO adresDAO = new AdresDAOHibernate(factory);
+        OVChipkaartDAO ovChipkaartDAO = new OVChipkaartDAOHibernate(factory);
 
         // Opdracht P2H
         System.out.println("[TEST] ReizigerDAOHibernate");
@@ -88,7 +88,28 @@ public class Main {
         System.out.println("Adressen ophalen door findAll");
         System.out.println(adresDAO.findAll());
 
-        //Wijzigingen weer terugzetten na tests
+        // Opdracht P4H
+        System.out.println();
+        System.out.println("[TEST] OVChipkaartDAOHibernate");
+        System.out.println("Nieuwe OVChipkaart opslaan en ophalen door findById");
+        OVChipkaart ovChipkaart = new OVChipkaart(123456, LocalDate.of(2021, 1, 1), 1, 25.0, Kasper);
+        ovChipkaartDAO.saveOVChipkaart(ovChipkaart);
+        System.out.println(ovChipkaartDAO.findById(123456));
+
+        System.out.println();
+        System.out.println("OVChipkaart updaten en ophalen door reiziger");
+        ovChipkaart.setSaldo(50.0);
+        ovChipkaartDAO.updateOVChipkaart(ovChipkaart);
+        System.out.println(ovChipkaartDAO.findByReiziger(Kasper));
+
+        System.out.println();
+        System.out.println("OVChipkaarten ophalen door findAll");
+        System.out.println(ovChipkaartDAO.findAll());
+
+
+
+        //Wijzigingen weer terugzetten na alle tests
+        ovChipkaartDAO.deleteOVChipkaart(ovChipkaart);
         adresDAO.deleteAdres(adres);
         reizigerDAO.deleteReiziger(Kasper);
         reizigerDAO.deleteReiziger(Jan);

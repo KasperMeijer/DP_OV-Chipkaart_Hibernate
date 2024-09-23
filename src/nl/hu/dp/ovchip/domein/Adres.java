@@ -13,7 +13,7 @@ public class Adres {
     private String straat;
     private String woonplaats;
 
-    @OneToOne()
+    @OneToOne
     @JoinColumn(name="reiziger_id")
     private Reiziger reiziger;
 

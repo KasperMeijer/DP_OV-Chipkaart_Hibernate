@@ -3,6 +3,8 @@ package nl.hu.dp.ovchip.domein;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="reiziger")
@@ -10,21 +12,16 @@ public class Reiziger {
     @Id
     @Column(name="reiziger_id")
     private int id;
-
-    @Column(name="voorletters")
     private String voorletters;
-
-    @Column(name="tussenvoegsel")
     private String tussenvoegsel;
-
-    @Column(name="achternaam")
     private String achternaam;
-
-    @Column(name="geboortedatum")
     private LocalDate geboortedatum;
 
     @OneToOne(mappedBy = "reiziger")
     private Adres adres;
+
+    @OneToMany(mappedBy = "reiziger")
+    private List<OVChipkaart> ovChipkaarten = new ArrayList<>();
 
     public Reiziger(){}
 
@@ -74,6 +71,26 @@ public class Reiziger {
 
     public void setGeboortedatum(LocalDate geboortedatum) {
         this.geboortedatum = geboortedatum;
+    }
+
+    public Adres getAdres() {
+        return adres;
+    }
+
+    public void setAdres(Adres adres) {
+        this.adres = adres;
+    }
+
+    public List<OVChipkaart> getOvChipkaarten() {
+        return ovChipkaarten;
+    }
+
+    public void addOVChipkaart(OVChipkaart ovChipkaart){
+        ovChipkaarten.add(ovChipkaart);
+    }
+
+    public void setOvChipkaarten(List<OVChipkaart> ovChipkaarten) {
+        this.ovChipkaarten = ovChipkaarten;
     }
 
     public String toString(){
