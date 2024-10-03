@@ -1,8 +1,11 @@
 package nl.hu.dp.ovchip.domein;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Cascade;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="ov_chipkaart")
@@ -17,6 +20,9 @@ public class OVChipkaart {
     @JoinColumn(name="reiziger_id")
     Reiziger reiziger;
 
+    @ManyToMany(mappedBy = "ovChipkaarten")
+    private List<Product> producten = new ArrayList<>();
+
     public OVChipkaart() {
     }
 
@@ -26,6 +32,18 @@ public class OVChipkaart {
         this.klasse = klasse;
         this.saldo = saldo;
         this.reiziger = reiziger;
+    }
+
+    public void addProduct(Product product) {
+        producten.add(product);
+    }
+
+    public void removeProduct(Product product) {
+        producten.remove(product);
+    }
+
+    public List<Product> getProducten() {
+        return producten;
     }
 
     public int getKaart_nummer() {

@@ -3,12 +3,12 @@ package nl.hu.dp.ovchip;
 import nl.hu.dp.ovchip.data.*;
 import nl.hu.dp.ovchip.domein.Adres;
 import nl.hu.dp.ovchip.domein.OVChipkaart;
+import nl.hu.dp.ovchip.domein.Product;
 import nl.hu.dp.ovchip.domein.Reiziger;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import java.sql.SQLException;
-import java.sql.SQLOutput;
 import java.time.LocalDate;
 
 /**
@@ -29,6 +29,7 @@ public class Main {
                     .addAnnotatedClass(Reiziger.class)
                     .addAnnotatedClass(Adres.class)
                     .addAnnotatedClass(OVChipkaart.class)
+                    .addAnnotatedClass(Product.class)
                     .buildSessionFactory();
         } catch (Throwable ex) {
             throw new ExceptionInInitializerError(ex);
@@ -39,6 +40,8 @@ public class Main {
         ReizigerDAO reizigerDAO = new ReizigerDAOHibernate(factory);
         AdresDAO adresDAO = new AdresDAOHibernate(factory);
         OVChipkaartDAO ovChipkaartDAO = new OVChipkaartDAOHibernate(factory);
+        ProductDAO productDAO = new ProductDAOHibernate(factory);
+
 
         // Opdracht P2H
         System.out.println("[TEST] ReizigerDAOHibernate");
@@ -106,9 +109,33 @@ public class Main {
         System.out.println("OVChipkaarten ophalen door findAll");
         System.out.println(ovChipkaartDAO.findAll());
 
+        // Opdracht P5H
+        System.out.println();
+        System.out.println("[TEST] ProductDAOHibernate");
+        System.out.println("Nieuw product opslaan, koppelen aan OVChipkaart en ophalen door findByOVChipkaart");
+        Product product = new Product("Test", "Test", 25.0);
+        ovChipkaart.addProduct(product);
+        product.addOVChipkaart(ovChipkaart);
+        productDAO.saveProduct(product);
+        System.out.println(productDAO.findByOVChipkaart(ovChipkaart));
 
+        System.out.println();
+        System.out.println("Product updaten en ophalen door OVChipkaart");
+        product.setPrijs(50.0);
+        productDAO.updateProduct(product);
+        System.out.println(productDAO.findByOVChipkaart(ovChipkaart));
+
+        System.out.println();
+        System.out.println("Producten ophalen door findAll");
+        System.out.println(productDAO.findAll());
 
         //Wijzigingen weer terugzetten na alle tests
+        product.removeOVChipkaart(ovChipkaart);
+        ovChipkaart.removeProduct(product);
+        productDAO.updateProduct(product);
+        ovChipkaartDAO.updateOVChipkaart(ovChipkaart);
+        productDAO.deleteProduct(product);
+
         ovChipkaartDAO.deleteOVChipkaart(ovChipkaart);
         adresDAO.deleteAdres(adres);
         reizigerDAO.deleteReiziger(Kasper);
